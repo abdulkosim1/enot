@@ -16,7 +16,7 @@ SECRET_KEY = 'django-insecure-r(k6lc9oj1(zg-l2)(t@2*8d)zu986d*9$--6r2l-ri0p5#qu0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['34.107.117.216',]
+ALLOWED_HOSTS = ['34.107.117.216','127.0.0.1',]
 
 
 # Application definition
@@ -45,6 +45,9 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -157,7 +160,7 @@ MEDIA_ROOT = BASE_DIR / 'media/'
 
 CORS_ALLOWED_ORIGINS = [
     # 'https://final-hackaton-freelance-mp.vercel.app',
-    # 'http://localhost:3000',
+    'http://localhost:3000',
 
 ]
 CELERY_TIMEZONE = "Australia/Tasmania"

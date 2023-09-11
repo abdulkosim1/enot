@@ -1,6 +1,7 @@
 from rest_framework import generics
-from .serializers import ProductSerializer
-from .models import Product
+from .serializers import ProductSerializer, RatingSerializer, CommentSerializer
+from .models import Product, Rating, Comment
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from account.permissions import IsCompany
 from rest_framework.pagination import PageNumberPagination
@@ -8,11 +9,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListAPIView
 from django.contrib.auth import get_user_model
-from django.db.models import Count
+from rest_framework.generics import CreateAPIView
+from rest_framework.response import Response
 
-# import logging
-
-# logger = logging.getLogger('main')
 
 User = get_user_model()
 
@@ -30,8 +29,6 @@ class ProductListAPIView(generics.ListAPIView): # Просмотр постов
     filter_fields = ['owner', 'title', 'likes', 'comments']
     search_fields = ['title', ]
     ordering_fileds = ['id','owner', 'likes', 'comments']
-
-    # logger.info('get all posts')
 
 class ProductCreateAPIView(generics.CreateAPIView): # Добавление постов
     queryset = Product.objects.all()
@@ -52,3 +49,27 @@ class SystemOfRecomendation(ListAPIView): # Get запрос на систему
     permission_classes = []
     pagination_class = CustomPagination
     # queryset = Product.objects.annotate(like_count=Count('likes')).filter(like_count__gt=1)
+
+
+class AddRating(CreateAPIView): # Post запрос на добавление рейтинга
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def post(self, request, pk, *args, **kwargs):
+        serializer = RatingSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        rating_obj, _ = Rating.objects.get_or_create(owner=request.user, users_id=pk)
+        rating_obj.rating = request.data['rating']
+        rating_obj.save()
+        return Response(serializer.data)
+
+class CommentModelViewSet(ModelViewSet): # CRUD на комменты
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated,]
+
+    def perform_create(self, serializer):
+        serializer.save(owner = self.request.user)
+        return serializer
+   
