@@ -6,28 +6,30 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 User = get_user_model()
 
+class Category(models.Model):
+    title = models.CharField(max_length=40)
+    description = models.TextField()
+
+    def __str__(self) -> str:
+        return self.title
+
+
 class Product(models.Model):
     owner = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='products'
     )
+    # category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='product_categories')
     name = models.CharField(max_length=50)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     images = models.ImageField(upload_to='product_images/')
     date = models.DateTimeField(auto_now_add=True)
 
+
     def __str__(self) -> str:
         return f'{self.title} {self.owner}'
-
-# class Like(models.Model):
-#     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes_owner')
-#     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='likes')
-#     is_like = models.BooleanField(default=False)
-
-#     def __str__(self) -> str:
-#         return f'{self.owner} liked - {self.post.title}'
 
 class Rating(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owner_ratings')
