@@ -20,7 +20,7 @@ class Product(models.Model):
         on_delete=models.CASCADE,
         related_name='products'
     )
-    # category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='product_categories')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='product_categories', default=1)
     name = models.CharField(max_length=50)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -29,7 +29,7 @@ class Product(models.Model):
 
 
     def __str__(self) -> str:
-        return f'{self.title} {self.owner}'
+        return f'{self.name} {self.owner}'
 
 class Rating(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owner_ratings')
